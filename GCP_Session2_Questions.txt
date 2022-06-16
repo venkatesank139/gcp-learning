@@ -1,0 +1,48 @@
+Google App Engine
+
+1. In App Engine - Standard, the pricing is based on,
+	(a) Number of CPUs
+	(b) Instance Hours
+	(c) Used memory
+	(d) Number of user requests
+
+	Ans: b
+	
+2.	App Engine deployment configurations will be available in,
+	(a)package.json
+	(b)pom.xml
+	(c)app.yaml
+	(d)requirements.tx
+	
+	Ans: c
+
+3. In App Engine - Flexible, we can scale down to 0 instances if there are no requests from the user.
+	(a) True
+	(b) False
+
+	Ans: b
+	
+	
+Google Kubernetes Engine
+
+1.	What is the recommended option if we want to expose a Kubernetes service to the external users,
+	(a) LoadBalancer
+	(b) Ingress
+	(c) NodePort
+	(d) ClusterIP
+	
+	Ans: b
+	
+2.	In Kubernetes, a group of one or more containers is called,
+	(a) Cluster
+	(b) Node
+	(c) Pod
+	(d) NodePool
+	
+	Ans: c
+	
+3.	Do we need to create a deployment for every microservice release?
+	(a) Yes
+	(b)	No
+	
+	Ans: b

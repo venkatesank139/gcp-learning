@@ -1,0 +1,39 @@
+gcloud container clusters get-credentials demo-cluster --zone us-central1-c --project stone-index-353214
+
+kubectl create deployment default-service --image-url=venkatesank139/appengine-demo:V1
+
+
+docker pull in28min/hello-world-rest-api:0.0.1-SNAPSHOT
+
+
+todo:
+
+see how we can deploy a docker image in google cloud app engine		wed
+see the tutorial for the Google app engine		wed
+prepare the PPT for the session		wed
+prepare the questions for the session	thu
+
+do the labs once more in the office laptop for both app engine and GKE		thu
+
+
+kubernetes engine samples	
+app engine		
+
+
+Pushing Public Dockerhub images to Google GCR registry
+
+docker pull venkatesank139/<repo>:tag
+docker tag venkatesank139/<repo>:tag asia.gcr.io/<project_id>/<repo>:tag
+docker push asia.gcr.io/<project_id>/<repo>:tag
+
+
+https://codelabs.developers.google.com/codelabs/cloud-app-engine-springboot
+
+
+Main objective of this document is to facilitate the Asp. Net Core and Angular applications to deploy into GCP with Google Compute Engine & Cloud Run.
+
+
+https://cloud.google.com/appengine
+https://cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview
+https://github.com/GoogleCloudPlatform/appengine-custom-runtimes-samples
+https://github.com/GoogleCloudPlatform/kubernetes-engine-samples

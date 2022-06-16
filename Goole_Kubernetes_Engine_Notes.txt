@@ -1,0 +1,134 @@
+Create a Kubernetes Cluster and deploy a Microservice in the cluster
+
+1.	Create the Kubernets Cluster either using Gcloud Console or Cloud Shell
+		gcloud container clusters create / gcloud console
+2.	Connect with Cloud Shell
+3.	Set the current Project id
+		gcloud config set project <<project_id>>
+4.	Connect with the cluster
+		gcloud container clusters get-credentials <<cluster_id>> --zone <<zone_id>> --project <<project_id>>
+5.	Create the deployment to deploy the microservice
+		kubectl create deployment <<deployment_id>> --image=<<docker_image_path>>
+6.	Expose the created deployment which will create the Kubernetes service and it can be accessed via Internet
+		kubectl expose deployment --type LoadBalancer --port 8080
+
+Manual Scaling of Pods (Microservices) and Nodes (Cluster)
+
+7.	The scaling of Pods can be done with scale deployment,
+		kubectl scale deployment <<deployment_id>> --replicas=<<number_of_pods>>
+8.	The scaling of Nodes within a particular node pool can be like below,
+		gcloud container clusters resize <<cluser_id>> --zone <<zone_id>> --node-pool <<node_pool_name>> --num-nodes <<number_of_nodes>>
+		
+Auto Scaling of Pods (Microservices) and Nodes (Cluster)
+
+9.	The autoscaling of Pods (Microservice) can be acheived with,
+		kubectl autoscale deployment <<deployment_id>> --max=<<number_of_pods>> --cpu-percent=<<cpu_utilization_percentage>>
+10.	The autoscaling of cluster can be achieved with,
+		gcloud container clusters update <<cluster_id>> --zone <<zone_id>> --enable-autoscaling --min-nodes=<<min_no_of_nodes>> --max-nodes=<<max_no_of_nodes>>
+	
+Creating Application / Password Configuration for Microservices
+
+11.	The below way we can create the application configuration in Kubernetes which can be used in the Microservices,
+		kubectl create configmap <<configmap_id>> --from-literal=<<comma_seperated_key_value_pairs>>
+12. The below way we can create the password configuration in kubernetes to store the secrets,
+		kubectl create secret generic <<secret_id>> --from-literal=<<comman_seperated_key_value_secrets>>
+		
+Deploy new Microservice which requires nodes with GPU capability
+
+13. Create a new node pool with GPU nodes,
+		gcloud container node-pools create <<node_pool_id>> --cluster <<cluster_id>> --zone <<zone_id>>
+	To get list of available node pools,
+		gcloud container node-pools list --cluster <<cluster_id>> --zone <<zone_id>>
+14. Mention the nodeSelector in the deployment.yaml file to refer the new node pool created
+		nodeSelector: cloud.google.com/gke-nodepool:<<node_pool_id>>
+
+Delete Microservices
+
+15.	Delete service
+		kubectl delete service <<deployment_id>>
+	Delete deployment
+		kubectl delete deployment <<deployment_id>>
+		
+Delete Cluster
+
+16. Delete cluster
+		gcloud container clusters delete <<cluster_id>>
+		
+Deployment vs Replicasets
+
+	Deployment
+		The deployment is created for each microservice, and it represents a microservice with all its releases. It ensures that when we move from one version to another, there is no downtime.
+
+	Replicasets
+		The replicaset ensures that specific number of pods run for a specific microservice version. A new replicaset is getting created each time, when we deploy a new microservice version. 
+			kubectl set image deployment <<deployment_id>> <<deployment_id>>=<<docker_image>> (<<docker_image>> -> The new version of the microservice)
+		
+		Also, when a pod is getting killed, the replicaset ensures that new pod is launched automatically.
+			
+Service
+	
+	The Kubernetes service exposes the deployment to the external users over the internet.
+	
+	Why we need Service?
+		Each POD has its own IP address. What if one POD goes down, or when the new vesion is deployed entire set of pods getting replaced with a new replicaset pods. So, to avoid the users getting impacted due to the internal changes, we need to create the service to expose the deployment. This will ensures that the internal changes will not affect the external users.
+	
+	Types
+	
+		ClusterIP: Expose service on a Cluster Internal IP
+			This is used when we want to access the microservice only within the cluster. In this case, the service can't be accessed outside the cluster.
+			
+		LoadBalancer: Expose service using the cloud providers LoadBalancer to the external world
+			This will create individual LoadBalancer for each microservice
+			
+		NodePort: Expose service on each node's IP at a static port
+			When we don't want to create a individual LoadBalancer for each microservice. We can create one Ingress component to load balance multiple microservices.
+			
+Ingress
+		
+	Ingress is a collection of rules for routing the external HTTP(S) traffic to services within the cluster. It is the recommended approach if we want to give external access to the services in a cluster.
+	
+	Recommended Solution:
+	
+		Use NodePort service for each microservice and expose using Ingress. The advantage here is, wiht one load balancer we can serve multiple microservices, whereas in case of LoadBalancer service, a new LoadBalancer will be created for each microservice.
+		
+	Syntax:
+		
+		spec:
+			rules:
+			-http:
+				paths:
+					-path: /my-service1/*
+					backend:
+						serviceName: my-service1
+						servicePort: 8080
+					-path: /my-service2/*
+					backend:
+						serviceName: my-service2
+						servicePort: 8090
+				
+Google Container Registry (GCR)
+	
+	The GCR is the place where we store the container images of the microservices, its a managed service by Google. Docker hub is the alternative which is a public container repository. The GCR can be integrated into CI/CD tools to publish images to repository.
+	
+	Naming Convention: HostName/ProjectId/Service:version	(eg: gcr.io/myfirstproject/hello-world:v1)
+	
+	Docker Image
+		
+		The DockerFile contains the instrcutions to create the Docker images.
+			FROM:	Sets the base image
+			WORKDIR:	Sets the work directory
+			RUN:	Execute a command
+			EXPOSE: Inform docker that the container will listen on at the given port during runtime
+			CMD:	Execute the container
+		
+		Best Practices
+			
+			Use light weight images (prefer alpine over ubuntu)
+			Do not copy unnecssary files (like node_modules, target folders, etc)
+			Move things that change less often to the top to enable LAYER REUSE
+			
+		
+	
+	
+	
+	

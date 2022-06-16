@@ -1,0 +1,72 @@
+App Engine
+	
+	Google Apple Engine is a PaaS service which is used to deploy the services into the Google Cloud.
+	
+	Features
+		Automatic Load Balancing, Auto Scaling
+		Since its PaaS offering, the platform updates and health monitoring is taken care by Google
+		Supports multiple versions
+		Traffic Splitting
+		
+	Environments
+		
+		Standard
+			Application runs within the lanugage specific sandboxes. There are two versions,
+			v1: Supports old versions of Java, PHP, Python, Go, etc.
+			v2: Supports newer versions of Java, PHP, Python, Go, etc.
+		
+		Flexible
+			Application runs within the Docker containers. App Engine Flexible makes use of the Compute Engine Virtual Machines. Supports ANY runtime, since the application runs within the Docker containers. Provides access to the local disks and background processes.
+			
+	App Engine - Application Hierarchy
+	
+		Each project can have only one application, each application can have many services (microservices) and each service can have many versions. Each version can run in one or more instances. We can rollback a particular version or split traffic between different versions. Multiple versions can co-exist.
+		
+	App Engine Standard vs App Engine Flexible
+	
+									Standard				Flexible
+			
+		Pricing			  Instance Hours					Based on no of vCPUS, Memory, Disk, etc.
+		Scaling			  Manual, Basic, Automatic			Manual, Automatic
+		Scaling to Zero	  Yes								No
+		Instance startup  in seconds						in Mins
+		Rapid scaling	  Yes								No
+		Max req timeout	  1 to 10 mins						60 mins
+		SSH for debugging No								Yes
+		
+	Auto Scale Options
+		Automatic
+			Automatically scale instances based on the load. Recommended for continuously running workloads. Auto scale based on,
+				Target CPU Utilization
+				Target Throughput Utilization
+				Max concurrent requests
+			Configure Max and Min instances
+		Basic
+			Instances are created as and when requests are received. Recommended for Adhoc workoads. Instances are shutdown if ZERO requests. Configure Max instances and Idle timeout.
+		Manual
+			Adjust the configuration manually.
+	
+	When we deploy an app to the App engine, the source code will be uploaded to Googld Cloud storage and a deployment package will be created by the Google cloud run by accessing the google cloud storage, then the deployment package will be deployed to the app engine.
+	
+	Deploy an app
+		glcoud app deploy
+		gcloud app deploy --version=<<version>> (Note: If we don't give version, it will be set automatically)
+		gcloud app deploy --image-url=<<image_url>> (Note: the image should present within any of the gcr repositories)
+		gcloud app deploy --no-promote (Note: Dont set the app to serve any requests)
+		
+	Listing available services/versions
+		glcoud app services list
+		gcloud app versions list
+		gcloud app instances list
+	
+	Get details of a particular service/version (like url of the service, etc)
+		gcloud app browse
+		gcloud app browse --version=<<version>> --service=<<service_id>>
+	
+	Split the traffic between different versions
+		gcloud app services split-traffic --splits=<<split_by_version>>	(Note: eg: --splits=v1=0.5,v2=0.5)
+		gcloud app services split-traffic --splits=<<split_by_version>> --split-by=<<split_by_option>>	(Note: available split by options: random, cookie, ip (ip is the default one)).
+		
+	
+	
+	
